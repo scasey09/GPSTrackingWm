@@ -36,7 +36,8 @@ String longitude = "";
 int ledPin = 13; 
 int intPin = 2; //interrupt pin 
 int LIS3DH_ADDR = 0x18;
-int sleepTime = 1; 
+int sleepTime = 60; 
+int calledByInterrupt = 0; 
 
 void setup()
 {
@@ -65,15 +66,17 @@ void setup()
 
 void loop()
 { 
+  
+  if(calledByInterrupt == 0){
   sleep.timedSleep(sleepTime);
-   bool newData = false;                                                      
-   //  if (millis() - lastMillis >= 2*60*1000UL)
-  //  if (millis() - lastMillis >= 2*10*1000UL) 
-  //{
-  // lastMillis = millis();  //get ready for the next iteration
-   getGPS();
-    
-  //}
+  }
+   bool newData = false;
+   getGPS();                                                      
+   /* if (millis() - lastMillis >= 2*60*1000UL)
+    if (millis() - lastMillis >= 2*10*1000UL) 
+     {
+      lastMillis = millis();  //get ready for the next iteration
+     } */
    
 }
 
@@ -92,7 +95,7 @@ void getGPS()
       String lat = GPS.conversion(lattitude,0);
       String lon = GPS.conversion(longitude,1);
       http_str = "AT+HTTPPARA=\"URL\",\"https://api.thingspeak.com/update?api_key=" + Apikey + "&field1=" + lat + "&field2=-" + lon + "&field3=" + _message + "&field4=" + _battery_level + "\"\r\n";
-    
+      
       }else{
         String lat = "1";
         String lon = "1";
@@ -133,6 +136,7 @@ void pin2Interrupt(){
   //sleep_disable();
   Serial.println("Pin2Interrupt");
   digitalWrite(ledPin, HIGH);
+  calledByInterrupt = 1; 
   getGPS();
   /*  Serial.print("  \tinterrupt: ");
     Serial.print(reading++); Serial.print(",  ");
