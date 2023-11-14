@@ -1,8 +1,10 @@
 //GPS Upload TEST
 #include <stdio.h>                                                      //Include the required libraries
 #include <string.h>
+#include <ArduinoLowPower.h>
 #include "battery.h"
 #include "GPSFormat.h"
+#include "GPSSleep.h"
 
 String Apikey = "HDU74GAZ625355R9";                                                //Thingspeak write API key
 Battery b;                                                                         //Battery Class Object
