@@ -5,6 +5,7 @@
 #include "battery.h"
 #include "GPSFormat.h"
 #include "GPSSleep.h"
+#include "accel.h"
 
 String Apikey = "HDU74GAZ625355R9";                                                //Thingspeak write API key
 Battery b;                                                                         //Battery Class Object
