@@ -10,15 +10,18 @@
 String Apikey = "HDU74GAZ625355R9";                                                //Thingspeak write API key
 Battery b;                                                                         //Battery Class Object
 GPSFormat GPS;                                                                     //Formatting GPS String
+Accel aSensor; 
+GPSSleep sleep;
 
 #define DEBUG true                                                    //Define LTE parameters and pin functions
 #define LTE_RESET_PIN 6
 #define LTE_PWRKEY_PIN 5
 #define LTE_FLIGHT_PIN 7
 #define BATTERY_PIN A1
-#define pinInterrupt A0                                               //Wind speed sensor interrupt pin                                            //Particle sensor reading pin                                         //Particle sensor LED pin
+//#define pinInterrupt A0                                               //Wind speed sensor interrupt pin
+//#define SLEEP_TIME 10
 
-unsigned long lastMillis;                                //
+unsigned long lastMillis;                                
 //app variables that get pushed to thingspeak
 String loc = "";
 int _message;          //Move to class 
@@ -30,6 +33,10 @@ float _zero_percent_voltage;
 float _max_voltage;
 String lattitude = ""; 
 String longitude = ""; 
+int ledPin = 13; 
+int intPin = 2; //interrupt pin 
+int LIS3DH_ADDR = 0x18;
+int sleepTime = 1; 
 
 void setup()
 {
@@ -49,21 +56,24 @@ void setup()
     //INITIALIZING GPS MODULE  
     SerialUSB.print("You are here");
     delay(20000);
-    
     sendData("AT+CGPS=0",3000,DEBUG);
     sendData("AT+CGPS=1",3000,DEBUG);
+
+    //aSensor.setupAccel(intPin, LIS3DH_ADDR);                                        //Setup accelerometer with Accel Class
+    //attachInterrupt(digitalPinToInterrupt(intPin), pin2Interrupt, HIGH);            //Attach Interrupt to accelerometer 
 }
 
 void loop()
 { 
+  sleep.timedSleep(sleepTime);
    bool newData = false;                                                      
    //  if (millis() - lastMillis >= 2*60*1000UL)
-    if (millis() - lastMillis >= 2*10*1000UL) 
-  {
-   lastMillis = millis();  //get ready for the next iteration
+  //  if (millis() - lastMillis >= 2*10*1000UL) 
+  //{
+  // lastMillis = millis();  //get ready for the next iteration
    getGPS();
     
-  }
+  //}
    
 }
 
@@ -117,3 +127,19 @@ String sendData(String command, const int timeout, boolean debug)       //Functi
   }
   return response;
 }
+
+void pin2Interrupt(){
+  /* Detach interrupt to prevent continous fireing */
+  //sleep_disable();
+  Serial.println("Pin2Interrupt");
+  digitalWrite(ledPin, HIGH);
+  getGPS();
+  /*  Serial.print("  \tinterrupt: ");
+    Serial.print(reading++); Serial.print(",  ");
+    Serial.print(readRegister(0x21)); Serial.print(",  "); //read register to reset high-pass filter 
+    Serial.print(readRegister(0x26)); Serial.print(",  "); //read register to set reference acceleration
+    Serial.print(readRegister(LIS3DH_REG_INT1SRC)); Serial.print(",  "); //Read INT1_SRC to de-latch;
+    Serial.println(); */
+   
+  //detachInterrupt(0);
+} 
