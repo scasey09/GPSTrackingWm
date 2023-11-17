@@ -86,21 +86,13 @@ void loop()
    bool newData = false;
    getGPS();
    //Reset Variables for notifications, so that they are not sending all the time, maybe once per day 
-     if (notificationStatusBattery == 1){
-        notificationStatusBattery = notification.delayNotification(notificationStatusBattery);
-     }                              
+     for (int i = 0; i < 5; ++i) {
+        notificationStatusAccel = notification.delayNotification(0, notificationStatusAccel);
+        notificationStatusGPS = notification.delayNotification(1, notificationStatusGPS);
+        notificationStatusLocation = notification.delayNotification(2, notificationStatusLocation);
+        notificationStatusBattery = notification.delayNotification(3, notificationStatusBattery);
+    }
 
-     if (notificationStatusGPS == 1){
-         notificationStatusGPS = notification.delayNotification(notificationStatusGPS);
-     }                                                    
-
-     if (notificationStatusGPS == 1){
-       notificationStatusAccel =  notification.delayNotification(notificationStatusAccel);
-     }
-
-     if (notificationStatusGPS == 1){
-        notificationStatusLocation = notification.delayNotification(notificationStatusLocation);
-     }                                             
 }
 
 
