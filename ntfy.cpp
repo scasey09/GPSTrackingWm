@@ -32,3 +32,10 @@ String ntfy::sendDataClass(String command, const int timeout, boolean debug)
   }
   return response;
 }
+
+int ntfy::delayNotification(int noti){
+
+return noti;
+//set Millis for timing on when to reset notification for events 
+
+}

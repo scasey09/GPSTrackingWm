@@ -40,6 +40,10 @@ int intPin = 2; //interrupt pin
 int LIS3DH_ADDR = 0x18;
 int sleepTime = 60; 
 int calledByInterrupt = 0; 
+int notificationStatusAccel = 0; 
+int notificationStatusGPS = 0; 
+int notificationStatusLocation = 0; 
+int notificationStatusBattery = 0; 
 
 String warningBatteryPwr = "You are on battery power";
 String warningBatteryLvl = "Your battery is below 50%";
@@ -52,7 +56,7 @@ void setup()
 {
     SerialUSB.begin(115200);                                            //Start serial communication for debugging
     Serial1.begin(115200);
-  
+
     pinMode(LTE_RESET_PIN, OUTPUT);                                     //Set up LTE pin modes and initial states
     digitalWrite(LTE_RESET_PIN, LOW);
     pinMode(LTE_PWRKEY_PIN, OUTPUT);
@@ -62,13 +66,13 @@ void setup()
     delay(2000);
     digitalWrite(LTE_PWRKEY_PIN, LOW);
     pinMode(LTE_FLIGHT_PIN, OUTPUT);
-    digitalWrite(LTE_FLIGHT_PIN, LOW);                                  //Normal Mode
+    digitalWrite(LTE_FLIGHT_PIN, LOW); 
+                                     //Normal Mode
     //INITIALIZING GPS MODULE  
     SerialUSB.print("You are here");
     delay(20000);
     notification.sendDataClass("AT+CGPS=0",3000,DEBUG);
     notification.sendDataClass("AT+CGPS=1",3000,DEBUG);
-
     //aSensor.setupAccel(intPin, LIS3DH_ADDR);                                        //Setup accelerometer with Accel Class
     //attachInterrupt(digitalPinToInterrupt(intPin), pin2Interrupt, HIGH);            //Attach Interrupt to accelerometer 
 }
@@ -80,19 +84,30 @@ void loop()
   sleep.timedSleep(sleepTime);
   }
    bool newData = false;
-   getGPS();                                                      
-   /* if (millis() - lastMillis >= 2*60*1000UL)
-    if (millis() - lastMillis >= 2*10*1000UL) 
-     {
-      lastMillis = millis();  //get ready for the next iteration
-     } */
-   
+   getGPS();
+   //Reset Variables for notifications, so that they are not sending all the time, maybe once per day 
+     if (notificationStatusBattery == 1){
+        notificationStatusBattery = notification.delayNotification(notificationStatusBattery);
+     }                              
+
+     if (notificationStatusGPS == 1){
+         notificationStatusGPS = notification.delayNotification(notificationStatusGPS);
+     }                                                    
+
+     if (notificationStatusGPS == 1){
+       notificationStatusAccel =  notification.delayNotification(notificationStatusAccel);
+     }
+
+     if (notificationStatusGPS == 1){
+        notificationStatusLocation = notification.delayNotification(notificationStatusLocation);
+     }                                             
 }
+
 
 void getGPS()
 {
    float _battery_level = b.refresh_battery();
-   loc = sendData("AT+CGPSINFO\r\n",3000,DEBUG);
+   loc = notification.sendDataClass("AT+CGPSINFO\r\n",3000,DEBUG);
    latLong returnedValues = GPS.gpsLocation(loc);
    lattitude = returnedValues.lattitude;
    longitude=returnedValues.longitude;
@@ -105,6 +120,9 @@ void getGPS()
       String lon = GPS.conversion(longitude,1);
       http_str = "AT+HTTPPARA=\"URL\",\"https://api.thingspeak.com/update?api_key=" + Apikey + "&field1=" + lat + "&field2=-" + lon + "&field3=" + _message + "&field4=" + _battery_level + "\"\r\n";
       
+      //notificationStatusLocation = 1; 
+
+      //notification.sendNotification("NO GPS Data", "GPS Data Missing", "skull");
       }else{
         String lat = "1";
         String lon = "1";
@@ -112,47 +130,31 @@ void getGPS()
        _message = 0;
        SerialUSB.println("No GPS Data");
        http_str = "AT+HTTPPARA=\"URL\",\"https://api.thingspeak.com/update?api_key=" + Apikey + "&field1=" + lat + "&field2=" + lon + "&field3=" + _message + "&field4=" + _battery_level + "\"\r\n";
+      if (notificationStatusAccel !=1){
+       notification.sendNotification("NO GPS Data", "GPS Data Missing", "skull");
+       notificationStatusGPS = 1; 
+      }
+
      }
      notification.sendDataClass("AT+HTTPINIT\r\n", 2000, DEBUG);                          //Send the data to Thingspeak
      notification.sendDataClass(http_str, 2000, DEBUG);
      notification.sendDataClass("AT+HTTPACTION=0\r\n", 3000, DEBUG);
      notification.sendDataClass("AT+HTTPTERM\r\n", 3000, DEBUG);
-}
 
-String sendData(String command, const int timeout, boolean debug)       //Function to send data over 4G
-{
-  String response = "";
-  Serial1.println(command);
-  
-  long int time = millis();
-  while ( (time + timeout) > millis())
-  {
-    while (Serial1.available())
-    {
-      char c = Serial1.read();
-      response += c;
-    }
-  }
-  if (debug)
-  {
-    SerialUSB.print(response);
-  }
-  return response;
+   
 }
 
 void pin2Interrupt(){
   /* Detach interrupt to prevent continous fireing */
   //sleep_disable();
-  Serial.println("Pin2Interrupt");
+  //Serial.println("Pin2Interrupt");
   digitalWrite(ledPin, HIGH);
   calledByInterrupt = 1; 
   getGPS();
-  /*  Serial.print("  \tinterrupt: ");
-    Serial.print(reading++); Serial.print(",  ");
-    Serial.print(readRegister(0x21)); Serial.print(",  "); //read register to reset high-pass filter 
-    Serial.print(readRegister(0x26)); Serial.print(",  "); //read register to set reference acceleration
-    Serial.print(readRegister(LIS3DH_REG_INT1SRC)); Serial.print(",  "); //Read INT1_SRC to de-latch;
-    Serial.println(); */
+  if (notificationStatusAccel !=1){
+    notification.sendNotification("Motorcycle thinks it has moved", "Accelerometer warning", "skull");
+    notificationStatusAccel = 1; 
+  }
    
   //detachInterrupt(0);
 } 
