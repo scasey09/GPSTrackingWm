@@ -6,12 +6,14 @@
 #include "GPSFormat.h"
 #include "GPSSleep.h"
 #include "accel.h"
+#include "ntfy.h"
 
 String Apikey = "HDU74GAZ625355R9";                                                //Thingspeak write API key
 Battery b;                                                                         //Battery Class Object
 GPSFormat GPS;                                                                     //Formatting GPS String
 Accel aSensor; 
 GPSSleep sleep;
+ntfy notification;
 
 #define DEBUG true                                                    //Define LTE parameters and pin functions
 #define LTE_RESET_PIN 6
@@ -39,6 +41,13 @@ int LIS3DH_ADDR = 0x18;
 int sleepTime = 60; 
 int calledByInterrupt = 0; 
 
+String warningBatteryPwr = "You are on battery power";
+String warningBatteryLvl = "Your battery is below 50%";
+String warningAccelInter = "Your bike thinks it has been moved";
+String warningCurrentLoc = "Your bike location has chnaged";
+String warningNoGPS = "No GPS signal";
+String warningUnkown = "Unknown error";
+
 void setup()
 {
     SerialUSB.begin(115200);                                            //Start serial communication for debugging
@@ -57,8 +66,8 @@ void setup()
     //INITIALIZING GPS MODULE  
     SerialUSB.print("You are here");
     delay(20000);
-    sendData("AT+CGPS=0",3000,DEBUG);
-    sendData("AT+CGPS=1",3000,DEBUG);
+    notification.sendDataClass("AT+CGPS=0",3000,DEBUG);
+    notification.sendDataClass("AT+CGPS=1",3000,DEBUG);
 
     //aSensor.setupAccel(intPin, LIS3DH_ADDR);                                        //Setup accelerometer with Accel Class
     //attachInterrupt(digitalPinToInterrupt(intPin), pin2Interrupt, HIGH);            //Attach Interrupt to accelerometer 
@@ -104,10 +113,10 @@ void getGPS()
        SerialUSB.println("No GPS Data");
        http_str = "AT+HTTPPARA=\"URL\",\"https://api.thingspeak.com/update?api_key=" + Apikey + "&field1=" + lat + "&field2=" + lon + "&field3=" + _message + "&field4=" + _battery_level + "\"\r\n";
      }
-    sendData("AT+HTTPINIT\r\n", 2000, DEBUG);                          //Send the data to Thingspeak
-    sendData(http_str, 2000, DEBUG);
-    sendData("AT+HTTPACTION=0\r\n", 3000, DEBUG);
-    sendData("AT+HTTPTERM\r\n", 3000, DEBUG);
+     notification.sendDataClass("AT+HTTPINIT\r\n", 2000, DEBUG);                          //Send the data to Thingspeak
+     notification.sendDataClass(http_str, 2000, DEBUG);
+     notification.sendDataClass("AT+HTTPACTION=0\r\n", 3000, DEBUG);
+     notification.sendDataClass("AT+HTTPTERM\r\n", 3000, DEBUG);
 }
 
 String sendData(String command, const int timeout, boolean debug)       //Function to send data over 4G
