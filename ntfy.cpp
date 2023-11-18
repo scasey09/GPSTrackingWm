@@ -5,10 +5,11 @@
 
 int nStatus = 1;
 unsigned long initialTimestamps[4];
-void ntfy::sendNotification(String title, String message, String tags){
+
+void ntfy::sendNotification(String title, String message, String tags, int priority){
 //const unsigned long oneDayMillis = 24 * 60 * 60 * 1000; 
 
-  http_push = "AT+HTTPPARA=\"URL\",\"https://ntfy.sh/_maduino_gps_push_?title=" + title + "&message=" + message + "&tags=" + tags + "\"\r\n";
+  http_push = "AT+HTTPPARA=\"URL\",\"https://ntfy.sh/_maduino_gps_push_?title=" + title + "&message=" + message + "&tags=" + tags + " + &Priority=" + priority + "\"\r\n";
 
    sendDataClass("AT+HTTPINIT\r\n", 2000, DEBUG);                          //Send the data to Thingspeak
    sendDataClass(http_push, 2000, DEBUG);

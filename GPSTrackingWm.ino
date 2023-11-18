@@ -113,7 +113,7 @@ void getGPS()
       http_str = "AT+HTTPPARA=\"URL\",\"https://api.thingspeak.com/update?api_key=" + Apikey + "&field1=" + lat + "&field2=-" + lon + "&field3=" + _message + "&field4=" + _battery_level + "\"\r\n";
       
       //notificationStatusLocation = 1; 
-      //notification.sendNotification("Current%20Location%20Alert", "Current%20Location:", "skull");
+      //notification.sendNotification("Current%20Location%20Alert", "Current%20Location:", "skull", 4);
       
       }else{
         String lat = "1";
@@ -123,7 +123,7 @@ void getGPS()
        SerialUSB.println("No GPS Data");
        http_str = "AT+HTTPPARA=\"URL\",\"https://api.thingspeak.com/update?api_key=" + Apikey + "&field1=" + lat + "&field2=" + lon + "&field3=" + _message + "&field4=" + _battery_level + "\"\r\n";
       if (notificationStatusGPS !=1){
-       notification.sendNotification("NO%20GPS%20Data", "GPS%20Data%20Missing", "skull");
+       notification.sendNotification("NO%20GPS%20Data", "GPS%20Data%20Missing", "skull", 4);
        notificationStatusGPS = 1; 
       }
 
@@ -144,7 +144,7 @@ void pin2Interrupt(){
   calledByInterrupt = 1; 
   getGPS();
   if (notificationStatusAccel !=1){
-    notification.sendNotification("Motorcycle%20thinks%20it%20has%20moved", "Accelerometer%20warning", "skull");
+    notification.sendNotification("Motorcycle%20thinks%20it%20has%20moved", "Accelerometer%20warning", "skull", 4);
     notificationStatusAccel = 1; 
   }
    

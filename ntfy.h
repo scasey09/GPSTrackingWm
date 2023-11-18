@@ -17,7 +17,7 @@ class ntfy {
   public:
     int nStatus;
     String http_push;
-    void sendNotification(String title, String message, String tags);
+    void sendNotification(String title, String message, String tags, int priority);
     String sendDataClass(String command, const int timeout, boolean debug);
     //int delayNotification(int notificationStatus);
     int delayNotification(int variableIndex, int notificationStatus);
