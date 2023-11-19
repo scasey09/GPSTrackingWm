@@ -24,11 +24,11 @@ const int number_of_levels = 4095; // 2^12
  _current_percent = mapfloat(_current_voltage,3.6,4.2,0,100);
 //_current_percent = map(_adc_value,0,3000,0,100);
 
-SerialUSB.print("Pin Value: ");
-SerialUSB.println(_adc_value);
-SerialUSB.print("Voltage: ");
-SerialUSB.println(_current_voltage);
-SerialUSB.print("Percent: " );
-SerialUSB.println( _current_percent);
+//SerialUSB.print("Pin Value: ");
+//SerialUSB.println(_adc_value);
+//SerialUSB.print("Voltage: ");
+//SerialUSB.println(_current_voltage);
+//SerialUSB.print("Percent: " );
+//SerialUSB.println( _current_percent);
 return  _current_percent;
 }

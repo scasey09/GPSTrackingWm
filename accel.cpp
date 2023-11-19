@@ -44,12 +44,13 @@ void Accel::init_ACC(void)
 }
 
 //Public Functions
-void Accel::setupAccel(int Pin, int LIS3DH_ADDR){
+void Accel::setupAccel(int intPin, int LIS3DH_ADDR){
 // int ledPin = 13; //LED TESTING
  //int intPin = 2; //interrupt pin 
   
   //int LIS3DH_ADDR = 0x18; // change this to 0x19 for alternative i2c address
   //int reading = 0; //counter for number of readings taken - for diagnostic use
+  //SerialUSB.println("LIS3DH test!");
   Adafruit_LIS3DH lis = Adafruit_LIS3DH();
   
  // pinMode(13, OUTPUT);  //For LED Testing only
@@ -58,17 +59,17 @@ void Accel::setupAccel(int Pin, int LIS3DH_ADDR){
   interrupts(); 
   //attach function to interrupt
   //digitalWrite(ledPin, LOW); //turn off LED 
-  Serial.begin(115200);
-  Serial.println("LIS3DH test!");
+  //Serial.begin(115200);
+  
 
-  if (! lis.begin(0x18)) {   // change this to 0x19 for alternative i2c address
-    Serial.println("Couldnt start");
+  if (! lis.begin(LIS3DH_ADDR)) {   // change this to 0x19 for alternative i2c address
+    SerialUSB.println("Couldnt start");
     while (1);
   }
-  Serial.println("LIS3DH found!");
+  SerialUSB.println("LIS3DH found!");
   lis.setRange(LIS3DH_RANGE_2_G);   // 2, 4, 8 or 16 G!
-  Serial.print("Range = "); Serial.print(2 << lis.getRange());  
-  Serial.println("G");
+  SerialUSB.print("Range = "); SerialUSB.print(2 << lis.getRange());  
+  SerialUSB.println("G");
   init_ACC();
 }
 
