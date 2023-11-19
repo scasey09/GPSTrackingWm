@@ -36,7 +36,7 @@ float _max_voltage;
 String lattitude = ""; 
 String longitude = ""; 
 int ledPin = 13; 
-int intPin = 7; //interrupt pin 
+int intPin = 2; //interrupt pin 
 //const byte intPin = A1;
 int LIS3DH_ADDR = 0x18;
 int sleepTime = 60; 
@@ -75,7 +75,7 @@ void setup()
     notification.sendDataClass("AT+CGPS=0",3000,DEBUG);
     notification.sendDataClass("AT+CGPS=1",3000,DEBUG);
     aSensor.setupAccel(intPin, LIS3DH_ADDR);                                        //Setup accelerometer with Accel Class
-    attachInterrupt(digitalPinToInterrupt(intPin), pin2Interrupt, HIGH);            //Attach Interrupt to accelerometer 
+    attachInterrupt(digitalPinToInterrupt(intPin), pin2Interrupt, RISING);            //Attach Interrupt to accelerometer 
 }
 
 void loop()
