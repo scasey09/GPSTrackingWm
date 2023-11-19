@@ -36,7 +36,8 @@ float _max_voltage;
 String lattitude = ""; 
 String longitude = ""; 
 int ledPin = 13; 
-int intPin = 2; //interrupt pin 
+int intPin = 7; //interrupt pin 
+//const byte intPin = A1;
 int LIS3DH_ADDR = 0x18;
 int sleepTime = 60; 
 int calledByInterrupt = 0; 
@@ -73,8 +74,8 @@ void setup()
     delay(20000);
     notification.sendDataClass("AT+CGPS=0",3000,DEBUG);
     notification.sendDataClass("AT+CGPS=1",3000,DEBUG);
-    //aSensor.setupAccel(intPin, LIS3DH_ADDR);                                        //Setup accelerometer with Accel Class
-    //attachInterrupt(digitalPinToInterrupt(intPin), pin2Interrupt, HIGH);            //Attach Interrupt to accelerometer 
+    aSensor.setupAccel(intPin, LIS3DH_ADDR);                                        //Setup accelerometer with Accel Class
+    attachInterrupt(digitalPinToInterrupt(intPin), pin2Interrupt, HIGH);            //Attach Interrupt to accelerometer 
 }
 
 void loop()
@@ -140,8 +141,8 @@ void pin2Interrupt(){
   /* Detach interrupt to prevent continous fireing */
   //sleep_disable();
   //Serial.println("Pin2Interrupt");
-  digitalWrite(ledPin, HIGH);
-  calledByInterrupt = 1; 
+  //digitalWrite(ledPin, HIGH);
+  //calledByInterrupt = 1; 
   getGPS();
   if (notificationStatusAccel !=1){
     notification.sendNotification("Motorcycle%20thinks%20it%20has%20moved", "Accelerometer%20warning", "skull", 4);
