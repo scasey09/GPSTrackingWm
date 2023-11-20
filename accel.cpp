@@ -36,7 +36,7 @@ void Accel::init_ACC(void)
     writeRegister(0x24, 0x00); //Write 08h into CTRL_REG5;      // Default value is 00 for no latching. Interrupt signals on INT1 pin is not latched. 
                                                                 //Users don’t need to read the INT1_SRC register to clear the interrupt signal.
     // configurations for wakeup and motionless detection
-    writeRegister(0x32, 0x40); //Write 10h into INT1_THS;          // Threshold (THS) = 16LSBs * 15.625mg/LSB = 250mg.
+    writeRegister(0x32, 0x10); //Write 10h into INT1_THS;          // Threshold (THS) = 16LSBs * 15.625mg/LSB = 250mg.
     writeRegister(0x33, 0x00); //Write 00h into INT1_DURATION;     // Duration = 1LSBs * (1/10Hz) = 0.1s.
     //readRegister();  //Dummy read to force the HP filter to set reference acceleration/tilt value
     writeRegister(0x30, 0x2A); //Write 2Ah into INT1_CFG;          // Enable XLIE, YLIE, ZLIE interrupt generation, OR logic.
@@ -55,7 +55,7 @@ void Accel::setupAccel(int intPin, int LIS3DH_ADDR){
   
  // pinMode(13, OUTPUT);  //For LED Testing only
   pinMode(intPin, INPUT); //set interrupt pin 
-  digitalWrite(intPin, LOW); //make sure it starts out low
+  //digitalWrite(intPin, LOW); //make sure it starts out low
   interrupts(); 
   //attach function to interrupt
   //digitalWrite(ledPin, LOW); //turn off LED 

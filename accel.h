@@ -17,7 +17,7 @@ class Accel {
   private:
     int ledPin; 
     int intPin;
-    int LIS3DH_ADDR; // change this to 0x19 for alternative i2c address
+    int LIS3DH_ADDR = 0x18; // change this to 0x19 for alternative i2c address
     int reading; //counter for number of readings taken - for diagnostic use
     void writeRegister(byte reg, byte data);
     unsigned int readRegister(byte reg);
@@ -31,4 +31,3 @@ class Accel {
 
 
 #endif
-
