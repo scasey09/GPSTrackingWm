@@ -24,7 +24,7 @@ ntfy notification;
 
 //#define pinInterrupt A0                                               //Wind speed sensor interrupt pin
 //#define SLEEP_TIME 10
-
+int sleepCount = 0; // Track how many times we have slept so we can reset to an hour when 60 have gone by 
 unsigned long lastMillis;                                
 //app variables that get pushed to thingspeak
 String loc = "";
@@ -89,7 +89,7 @@ void loop()
       digitalWrite(ledPin, LOW);
 
   }else{
-     sleepTime = 10;
+     sleepTime = checkGPSTimer(); // If waken up by interrupt, set timer to check once a minute for an hour for GPS location, send Push once
      if (notificationStatusAccel !=1){
      notification.sendNotification("Motorcycle%20thinks%20it%20has%20moved", "Accelerometer%20warning", "skull", 4);
      notificationStatusAccel = 1; 
@@ -97,10 +97,11 @@ void loop()
       }
   
   }
+  sleepTime = checkGPSTimer();
+  sleep.timedSleep(sleepTime);
+  bool newData = false;
   
-   sleep.timedSleep(sleepTime);
-   bool newData = false;
-   getGPS();
+  getGPS();
    //Reset Variables for notifications, so that they are not sending all the time, maybe once per day 
      for (int i = 0; i < 5; ++i) {
         notificationStatusAccel = notification.delayNotification(0, notificationStatusAccel);
@@ -151,5 +152,18 @@ void pin2Interrupt(){
   SerialUSB.println("Pin2Interrupt");
   digitalWrite(ledPin, HIGH);
   calledByInterrupt = 1; 
+
   
+}
+
+int checkGPSTimer(){
+
+    sleepCount ++;
+    sleepTime = 10; 
+    if (sleepCount == 10)
+    {
+      sleepTime = 60;
+      sleepCount = 0; 
+    }
+    return sleepTime;
 }
