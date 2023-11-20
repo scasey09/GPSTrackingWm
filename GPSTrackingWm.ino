@@ -111,7 +111,6 @@ void loop()
 
 }
 
-
 void getGPS()
 {
    float _battery_level = b.refresh_battery();
@@ -127,9 +126,6 @@ void getGPS()
       String lat = GPS.conversion(lattitude,0);
       String lon = GPS.conversion(longitude,1);
       http_str = "AT+HTTPPARA=\"URL\",\"https://api.thingspeak.com/update?api_key=" + Apikey + "&field1=" + lat + "&field2=-" + lon + "&field3=" + _message + "&field4=" + _battery_level + "\"\r\n";
-      
-      //notificationStatusLocation = 1; 
-      //notification.sendNotification("Current%20Location%20Alert", "Current%20Location:", "skull", 4);
       
       }else{
         String lat = "1";
@@ -148,8 +144,6 @@ void getGPS()
      notification.sendDataClass(http_str, 2000, DEBUG);
      notification.sendDataClass("AT+HTTPACTION=0\r\n", 3000, DEBUG);
      notification.sendDataClass("AT+HTTPTERM\r\n", 3000, DEBUG);
-
-   
 }
 
 void pin2Interrupt(){
