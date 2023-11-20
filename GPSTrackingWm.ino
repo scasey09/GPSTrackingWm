@@ -20,6 +20,8 @@ ntfy notification;
 #define LTE_PWRKEY_PIN 5
 #define LTE_FLIGHT_PIN 7
 #define BATTERY_PIN A1
+#define LED_PIN 2
+
 //#define pinInterrupt A0                                               //Wind speed sensor interrupt pin
 //#define SLEEP_TIME 10
 
@@ -35,11 +37,11 @@ float _zero_percent_voltage;
 float _max_voltage;
 String lattitude = ""; 
 String longitude = ""; 
-int ledPin = 13; 
+int ledPin = 3; 
 int intPin = 2; //interrupt pin 
 //const byte intPin = A1;
 int LIS3DH_ADDR = 0x18;
-int sleepTime = 60; 
+int sleepTime = 600; 
 int calledByInterrupt = 0; 
 int notificationStatusAccel = 0; 
 int notificationStatusGPS = 0; 
@@ -57,7 +59,7 @@ void setup()
 {
     SerialUSB.begin(115200);                                            //Start serial communication for debugging
     Serial1.begin(115200);
-
+    digitalWrite(ledPin, LOW);
     pinMode(LTE_RESET_PIN, OUTPUT);                                     //Set up LTE pin modes and initial states
     digitalWrite(LTE_RESET_PIN, LOW);
     pinMode(LTE_PWRKEY_PIN, OUTPUT);
@@ -74,16 +76,29 @@ void setup()
     delay(20000);
     notification.sendDataClass("AT+CGPS=0",3000,DEBUG);
     notification.sendDataClass("AT+CGPS=1",3000,DEBUG);
-    aSensor.setupAccel(intPin, LIS3DH_ADDR);                                        //Setup accelerometer with Accel Class
-    attachInterrupt(digitalPinToInterrupt(intPin), pin2Interrupt, RISING);            //Attach Interrupt to accelerometer 
+    aSensor.setupAccel(intPin, LIS3DH_ADDR);       //Setup accelerometer with Accel Class
+    delay(1000);
+    //attachInterrupt(digitalPinToInterrupt(intPin), pin2Interrupt, CHANGE);            //Attach Interrupt to accelerometer 
+    LowPower.attachInterruptWakeup(intPin, pin2Interrupt, CHANGE);
 }
 
 void loop()
 { 
-  
   if(calledByInterrupt == 0){
-  sleep.timedSleep(sleepTime);
+  
+      digitalWrite(ledPin, LOW);
+
+  }else{
+     sleepTime = 10;
+     if (notificationStatusAccel !=1){
+     notification.sendNotification("Motorcycle%20thinks%20it%20has%20moved", "Accelerometer%20warning", "skull", 4);
+     notificationStatusAccel = 1; 
+     
+      }
+  
   }
+  
+   sleep.timedSleep(sleepTime);
    bool newData = false;
    getGPS();
    //Reset Variables for notifications, so that they are not sending all the time, maybe once per day 
@@ -138,16 +153,9 @@ void getGPS()
 }
 
 void pin2Interrupt(){
-  /* Detach interrupt to prevent continous fireing */
-  //sleep_disable();
-  //Serial.println("Pin2Interrupt");
-  //digitalWrite(ledPin, HIGH);
-  //calledByInterrupt = 1; 
-  getGPS();
-  if (notificationStatusAccel !=1){
-    notification.sendNotification("Motorcycle%20thinks%20it%20has%20moved", "Accelerometer%20warning", "skull", 4);
-    notificationStatusAccel = 1; 
-  }
-   
-  //detachInterrupt(0);
-} 
+
+  SerialUSB.println("Pin2Interrupt");
+  digitalWrite(ledPin, HIGH);
+  calledByInterrupt = 1; 
+  
+}
