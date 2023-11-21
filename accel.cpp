@@ -59,7 +59,3 @@ void Accel::setupAccel(int intPin, int LIS3DH_ADDR){
   SerialUSB.println("G");
   init_ACC();
 }
-
-void Accel::listenforAccel(){
-  
-}

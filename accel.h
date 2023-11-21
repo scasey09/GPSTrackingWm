@@ -19,13 +19,12 @@ class Accel {
     int intPin;
     int LIS3DH_ADDR = 0x18; // change this to 0x19 for alternative i2c address
     int reading; //counter for number of readings taken - for diagnostic use
-    void writeRegister(byte reg, byte data);
-    unsigned int readRegister(byte reg);
     void init_ACC(void);
     
   public:
+    void writeRegister(byte reg, byte data);
+    unsigned int readRegister(byte reg);
     void setupAccel(int Pin, int LIS3DH_ADDR);
-    void listenforAccel();
     void pin2Interrupt();
   };
 
