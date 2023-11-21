@@ -92,7 +92,7 @@ void loop()
       digitalWrite(ledPin, LOW);
 
   }else{
-    
+     aSensor.writeRegister(0x20, 0x07);
     // sleepTime = checkGPSTimer(); // If waken up by interrupt, set timer to check once a minute for an hour for GPS location, send Push once
      if (notificationStatusAccel !=1){
      notification.sendNotification("Motorcycle%20thinks%20it%20has%20moved", "Accelerometer%20warning", "skull", 4);
@@ -167,6 +167,8 @@ int checkGPSTimer(){
     if (sleepCount == 10)
     {
       sleepTime = 60;
+           aSensor.writeRegister(0x20, 0x5F);
+
       digitalWrite(ledPin, LOW);
     }else{
        sleepCount ++;
