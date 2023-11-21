@@ -1,7 +1,7 @@
 #include "GPSSleep.h"
 #include <stdio.h>
 
-void GPSSleep::timedSleep(){
+void GPSSleep::timedSleep(int sleepTime){
 
-  LowPower.sleep(1000 * SLEEP_TIME);
+  LowPower.sleep(1000 * sleepTime);
 }

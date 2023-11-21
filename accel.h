@@ -1,5 +1,6 @@
 // accel.h
-
+#include <Arduino.h>
+#include <string.h>
 #ifndef ACCEL_H
 #define ACCEL_H
 
@@ -14,17 +15,19 @@
 
 class Accel {
   private:
-  int ledPin = 13; 
-  int intPin = 2;
-  int LIS3DH_ADDR = 0x18; // change this to 0x19 for alternative i2c address
-  int reading = 0; //counter for number of readings taken - for diagnostic use
+    int ledPin; 
+    int intPin;
+    int LIS3DH_ADDR = 0x18; // change this to 0x19 for alternative i2c address
+    int reading; //counter for number of readings taken - for diagnostic use
+    void writeRegister(byte reg, byte data);
+    unsigned int readRegister(byte reg);
+    void init_ACC(void);
     
   public:
-    void setupAccel();
+    void setupAccel(int Pin, int LIS3DH_ADDR);
     void listenforAccel();
-  
+    void pin2Interrupt();
   };
 
 
 #endif
-
