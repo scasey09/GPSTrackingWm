@@ -28,8 +28,8 @@ void Accel::writeRegister(byte reg, byte data) {
 
 void Accel::init_ACC(void)
 {
-    // configurations for control registers
-    writeRegister(0x20, 0x5F); //Write 57h into CTRL_REG1;      // Turn on the sensor, enable X, Y, Z axes with ODR = 100Hz normal mode.
+    // configurations for control registers                     //5F on 0X20 is lower power 100 hz mode 01010111
+    writeRegister(0x20, 0x5F); //Write 57h into CTRL_REG1;      // Turn on the sensor, enable X, Y, Z axes with ODR = 100Hz normal mode. 01011111
     writeRegister(0x21, 0x09); //Write 09h into CTRL_REG2;      // High-pass filter (HPF) enabled
     writeRegister(0x22, 0x40); //Write 40h into CTRL_REG3;      // ACC AOI1 interrupt signal is routed to INT1 pin.
     writeRegister(0x23, 0x00); //Write 00h into CTRL_REG4;      // Full Scale = +/-2 g

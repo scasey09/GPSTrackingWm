@@ -89,7 +89,7 @@ void loop()
 { 
   if(calledByInterrupt == 0){
       //
-      digitalWrite(ledPin, LOW);
+      digitalWrite(ledPin, LOW); //turn interrupt off during interrupt even which lasts current sleepTime (seconds) * 10 
 
   }else{
      aSensor.writeRegister(0x20, 0x07);
@@ -167,7 +167,7 @@ int checkGPSTimer(){
     if (sleepCount == 10)
     {
       sleepTime = 60;
-           aSensor.writeRegister(0x20, 0x5F);
+           aSensor.writeRegister(0x20, 0x5F); //Turn interrupt back on 
 
       digitalWrite(ledPin, LOW);
     }else{
