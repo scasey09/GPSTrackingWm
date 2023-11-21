@@ -45,23 +45,10 @@ void Accel::init_ACC(void)
 
 //Public Functions
 void Accel::setupAccel(int intPin, int LIS3DH_ADDR){
-// int ledPin = 13; //LED TESTING
- //int intPin = 2; //interrupt pin 
-  
-  //int LIS3DH_ADDR = 0x18; // change this to 0x19 for alternative i2c address
-  //int reading = 0; //counter for number of readings taken - for diagnostic use
-  //SerialUSB.println("LIS3DH test!");
-  Adafruit_LIS3DH lis = Adafruit_LIS3DH();
-  
- // pinMode(13, OUTPUT);  //For LED Testing only
-  pinMode(intPin, INPUT); //set interrupt pin 
-  //digitalWrite(intPin, LOW); //make sure it starts out low
-  interrupts(); 
-  //attach function to interrupt
-  //digitalWrite(ledPin, LOW); //turn off LED 
-  //Serial.begin(115200);
-  
 
+  Adafruit_LIS3DH lis = Adafruit_LIS3DH();
+  pinMode(intPin, INPUT); //set interrupt pin 
+  interrupts(); 
   if (! lis.begin(LIS3DH_ADDR)) {   // change this to 0x19 for alternative i2c address
     SerialUSB.println("Couldnt start");
     while (1);

@@ -35,25 +35,28 @@ float _current_voltage;
 float _current_percent;
 float _zero_percent_voltage;
 float _max_voltage;
+
 String lattitude = ""; 
 String longitude = ""; 
+
 int ledPin = 3; 
 int intPin = 2; //interrupt pin 
 //const byte intPin = A1;
 int LIS3DH_ADDR = 0x18;
-int sleepTime = 600; 
+int sleepTime = 600; // works out to seconds 
+
 int calledByInterrupt = 0; 
 int notificationStatusAccel = 0; 
 int notificationStatusGPS = 0; 
 int notificationStatusLocation = 0; 
 int notificationStatusBattery = 0; 
 
-String warningBatteryPwr = "You are on battery power";
-String warningBatteryLvl = "Your battery is below 50%";
-String warningAccelInter = "Your bike thinks it has been moved";
-String warningCurrentLoc = "Your bike location has chnaged";
-String warningNoGPS = "No GPS signal";
-String warningUnkown = "Unknown error";
+String warningBatteryPwr = "You%20are%20on%20battery%20power";
+String warningBatteryLvl = "Your%20battery%20is%20below%2050%";
+String warningAccelInter = "Your%20bike%20thinks%20it%20has%20been%20moved";
+String warningCurrentLoc = "Your%20bike%20location%20has%20changed";
+String warningNoGPS = "No%20GPS%20signal";
+String warningUnkown = "Unknown%20error";
 
 void setup()
 {
@@ -153,26 +156,21 @@ void pin2Interrupt(){
   SerialUSB.println("Pin2Interrupt");
   digitalWrite(ledPin, HIGH);
   calledByInterrupt = 1;
-   sleepCount = 0;
+  sleepCount = 0;
 
-  
 }
 
 int checkGPSTimer(){
-  SerialUSB.print("Sleep Count: ");
-  SerialUSB.print(sleepCount);
+   // SerialUSB.print("Sleep Count: ");
+   // SerialUSB.print(sleepCount);
    
-    
     if (sleepCount == 10)
     {
       sleepTime = 60;
       digitalWrite(ledPin, LOW);
-    //  sleepCount = 0; 
     }else{
        sleepCount ++;
-      //sleepCount = 0; 
        sleepTime = 10;
-       
     }
     return sleepTime;
 }
